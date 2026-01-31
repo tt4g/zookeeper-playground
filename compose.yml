@@ -1,0 +1,112 @@
+# Using Docker official ZooKeeper image.
+# See https://github.com/docker-library/docs/blob/master/zookeeper/README.md
+
+x-zookeeper-common-build: &zookeeper-common-build
+  context: "./docker/zookeeper/image/"
+
+x-zookeeper-common-environment: &zookeeper-common-environment
+  ZOO_SERVERS: >-
+    server.1=zookeeper-playground-zookeeper-1:2888:3888;2181
+    server.2=zookeeper-playground-zookeeper-2:2888:3888;2181
+    server.3=zookeeper-playground-zookeeper-3:2888:3888;2181
+  ZOO_TICK_TIME: 2000
+  ZOO_INIT_LIMIT: 5
+  ZOO_SYNC_LIMIT: 2
+  ZOO_MAX_CLIENT_CNXNS: 100
+  ZOO_STANDALONE_ENABLED: false
+  ZOO_AUTOPURGE_PURGEINTERVAL: 12
+  ZOO_AUTOPURGE_SNAPRETAINCOUNT: 3
+  ZOO_4LW_COMMANDS_WHITELIST: "srvr"
+  # ZOO_CFG_EXTRA: ""
+  # JVMFLAGS: ""
+
+x-zookeeper-common-ulimits: &zookeeper-common-ulimits
+  nproc: 65535
+  nofile:
+    soft: 65535
+    hard: 65535
+  memlock:
+    soft: -1
+    hard: -1
+
+x-zookeeper-common-logging: &zookeeper-common-logging
+  driver: "json-file"
+  options:
+    max-size: "1m"
+    max-file: 3
+
+services:
+
+  zookeeper-playground-zookeeper-1:
+    build:
+      <<: *zookeeper-common-build
+    hostname: zookeeper-playground-zookeeper-1
+    restart: always
+    ports:
+      - 2181:2181
+    volumes:
+      - type: volume
+        source: zookeeper-playground-zookeeper-1-data
+        target: /data
+      - type: volume
+        source: zookeeper-playground-zookeeper-1-datalog
+        target: /datalog
+    environment:
+      <<: *zookeeper-common-environment
+      ZOO_MY_ID: 1
+    ulimits:
+      <<: *zookeeper-common-ulimits
+    logging:
+      <<: *zookeeper-common-logging
+
+  zookeeper-playground-zookeeper-2:
+    build:
+      <<: *zookeeper-common-build
+    hostname: zookeeper-playground-zookeeper-2
+    restart: always
+    ports:
+      - 2182:2181
+    volumes:
+      - type: volume
+        source: zookeeper-playground-zookeeper-2-data
+        target: /data
+      - type: volume
+        source: zookeeper-playground-zookeeper-2-datalog
+        target: /datalog
+    environment:
+      <<: *zookeeper-common-environment
+      ZOO_MY_ID: 2
+    ulimits:
+      <<: *zookeeper-common-ulimits
+    logging:
+      <<: *zookeeper-common-logging
+
+  zookeeper-playground-zookeeper-3:
+    build:
+      <<: *zookeeper-common-build
+    hostname: zookeeper-playground-zookeeper-3
+    restart: always
+    ports:
+      - 2183:2181
+    volumes:
+      - type: volume
+        source: zookeeper-playground-zookeeper-3-data
+        target: /data
+      - type: volume
+        source: zookeeper-playground-zookeeper-3-datalog
+        target: /datalog
+    environment:
+      <<: *zookeeper-common-environment
+      ZOO_MY_ID: 3
+    ulimits:
+      <<: *zookeeper-common-ulimits
+    logging:
+      <<: *zookeeper-common-logging
+
+volumes:
+  zookeeper-playground-zookeeper-1-data:
+  zookeeper-playground-zookeeper-1-datalog:
+  zookeeper-playground-zookeeper-2-data:
+  zookeeper-playground-zookeeper-2-datalog:
+  zookeeper-playground-zookeeper-3-data:
+  zookeeper-playground-zookeeper-3-datalog:
