@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <appender name="CONSOLE"
+              class="ch.qos.logback.core.ConsoleAppender"
+    >
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>TRACE</level>
+        </filter>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %highlight(%5p) --- [%15.15t] %-40.40logger{39}: %m%n%xEx</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+    <appender name="ASYNC_CONSOLE"
+              class="ch.qos.logback.classic.AsyncAppender"
+    >
+        <appender-ref ref="CONSOLE" />
+        <queueSize>1024</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>true</includeCallerData>
+    </appender>
+
+    <appender name="FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender"
+    >
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>TRACE</level>
+        </filter>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %5p --- [%t] %-40.40logger{39}: %m%n%xEx</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <file>./log/zookeeper-playground</file>
+        <rollingPolicy
+            class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy"
+        >
+            <cleanHistoryOnStart>false</cleanHistoryOnStart>
+            <fileNamePattern>./log/zookeeper-playground.log.%d{yyyy-MM-dd}.%i.gz}</fileNamePattern>
+            <totalSizeCap>0</totalSizeCap>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+    <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="FILE"/>
+        <queueSize>1024</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>true</includeCallerData>
+    </appender>
+
+    <root level="TRACE">
+        <appender-ref ref="ASYNC_CONSOLE"/>
+        <appender-ref ref="ASYNC_FILE"/>
+    </root>
+
+    <shutdownHook class="ch.qos.logback.core.hook.DefaultShutdownHook">
+        <delay>100</delay>
+    </shutdownHook>
+</configuration>

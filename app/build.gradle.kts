@@ -1,5 +1,9 @@
 plugins {
     application
+
+    // Add `jvmDependencyConflicts` section.
+    // See: https://github.com/gradlex-org/jvm-dependency-conflict-resolution
+    id("org.gradlex.jvm-dependency-conflict-resolution").version("2.5")
 }
 
 repositories {
@@ -8,6 +12,9 @@ repositories {
 
 dependencies {
     implementation(libs.zookeeper)
+
+    implementation(libs.slf4j.api)
+    implementation(libs.logback.classic)
 
     // JUnit 6 dependencies.
     // See: https://github.com/junit-team/junit-framework/blob/r6.0.2/documentation/modules/ROOT/pages/running-tests/ide-support.adoc
@@ -22,6 +29,18 @@ dependencies {
 //    testImplementation(libs.mockito.junit.jupiter)
 
     testImplementation(libs.assertj.core)
+}
+
+// `jvm-dependency-conflict-resolution` plugin.
+jvmDependencyConflicts {
+    // logging framework settings.
+    // See "Select and enforce a logging framework" section:
+    // https://gradlex.org/jvm-dependency-conflict-resolution/#logging-dsl-block
+    // GitHub: https://github.com/gradlex-org/jvm-dependency-conflict-resolution/blob/v2.5/src/docs/asciidoc/parts/resolution.adoc#select-and-enforce-a-logging-framework
+    logging {
+        // Use `ch.qos.logback:logback-classic`
+        enforceLogback()
+    }
 }
 
 java {
