@@ -4,6 +4,13 @@ plugins {
     // Add `jvmDependencyConflicts` section.
     // See: https://github.com/gradlex-org/jvm-dependency-conflict-resolution
     id("org.gradlex.jvm-dependency-conflict-resolution").version("2.5")
+
+    // Error Prone.
+    // See: https://github.com/tbroyer/gradle-errorprone-plugin
+    id("net.ltgt.errorprone").version("5.0.0")
+    // NullAway support for Error Prone.
+    // https://github.com/tbroyer/gradle-nullaway-plugin
+    id("net.ltgt.nullaway").version("3.0.0")
 }
 
 repositories {
@@ -12,6 +19,10 @@ repositories {
 
 dependencies {
     implementation(libs.zookeeper)
+
+    errorprone(libs.errorprone.core)
+    errorprone(libs.nullaway)
+    implementation(libs.jspecify)
 
     implementation(libs.slf4j.api)
     implementation(libs.logback.classic)
@@ -41,6 +52,12 @@ jvmDependencyConflicts {
         // Use `ch.qos.logback:logback-classic`
         enforceLogback()
     }
+}
+
+// `gradle-nullaway-plugin`.
+nullaway {
+    annotatedPackages.add("com.github.tt4g.zookeeper.playground")
+    jspecifyMode = true
 }
 
 java {
