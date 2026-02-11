@@ -20,6 +20,8 @@ repositories {
 dependencies {
     implementation(libs.zookeeper)
 
+    implementation(libs.dotenv.java)
+
     errorprone(libs.errorprone.core)
     errorprone(libs.nullaway)
     implementation(libs.jspecify)
