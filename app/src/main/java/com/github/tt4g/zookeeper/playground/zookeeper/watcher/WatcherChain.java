@@ -1,4 +1,4 @@
-package com.github.tt4g.zookeeper.playground.zookeeper;
+package com.github.tt4g.zookeeper.playground.zookeeper.watcher;
 
 import org.apache.zookeeper.WatchedEvent;
 import org.jspecify.annotations.NonNull;

@@ -1,4 +1,4 @@
-package com.github.tt4g.zookeeper.playground.client;
+package com.github.tt4g.zookeeper.playground.zookeeper.client;
 
 import com.github.tt4g.zookeeper.playground.ZookeeperConfig;
 import org.apache.zookeeper.Watcher;

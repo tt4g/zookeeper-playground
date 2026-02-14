@@ -1,7 +1,7 @@
 package com.github.tt4g.zookeeper.playground;
 
-import com.github.tt4g.zookeeper.playground.client.ZookeeperClient;
-import com.github.tt4g.zookeeper.playground.zookeeper.WatcherChainBuilder;
+import com.github.tt4g.zookeeper.playground.zookeeper.client.ZookeeperClient;
+import com.github.tt4g.zookeeper.playground.zookeeper.watcher.WatcherChainBuilder;
 import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

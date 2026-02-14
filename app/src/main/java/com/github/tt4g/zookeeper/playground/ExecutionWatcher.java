@@ -1,6 +1,6 @@
 package com.github.tt4g.zookeeper.playground;
 
-import com.github.tt4g.zookeeper.playground.zookeeper.WatcherChain;
+import com.github.tt4g.zookeeper.playground.zookeeper.watcher.WatcherChain;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.jspecify.annotations.NullMarked;
