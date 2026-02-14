@@ -1,6 +1,5 @@
 package com.github.tt4g.zookeeper.playground;
 
-import com.github.tt4g.zookeeper.playground.client.ZookeeperClient;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +19,7 @@ public class App {
 
             var dotenv = this.loadDotenv();
             var zookeeperConfig = ZookeeperConfig.load(dotenv);
-            var _ = ZookeeperClient.create(zookeeperConfig);
+            ExecutionController.start(zookeeperConfig);
 
         } catch (Exception ex) {
             this.logger.atError().addArgument(ex).log("An error occurred!");

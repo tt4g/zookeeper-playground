@@ -1,7 +1,6 @@
 package com.github.tt4g.zookeeper.playground.client;
 
 import com.github.tt4g.zookeeper.playground.ZookeeperConfig;
-import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.jspecify.annotations.NullMarked;
 
@@ -16,17 +15,13 @@ public class ZookeeperClient {
     }
 
     public static ZookeeperClient create(
-        ZookeeperConfig zookeeperConfig
+        ZookeeperConfig zookeeperConfig,
+        Watcher watcher
     ) throws IOException {
         var zookeeperConnection =
             ZookeeperConnection.connect(
                 zookeeperConfig,
-                // TODO
-                new Watcher() {
-                    @Override
-                    public void process(WatchedEvent event) {
-                    }
-                }
+                watcher
             );
 
         return new ZookeeperClient(zookeeperConnection);
