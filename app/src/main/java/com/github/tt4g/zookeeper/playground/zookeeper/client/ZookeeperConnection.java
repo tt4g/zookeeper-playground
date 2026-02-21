@@ -8,7 +8,7 @@ import org.jspecify.annotations.NullMarked;
 import java.io.IOException;
 
 @NullMarked
-public class ZookeeperConnection {
+public class ZookeeperConnection implements AutoCloseable {
 
     private final ZooKeeper zooKeeper;
 
@@ -30,7 +30,19 @@ public class ZookeeperConnection {
         return new ZookeeperConnection(zookeeper);
     }
 
-    public void close() throws InterruptedException {
-        this.zooKeeper.close();
+    @Override
+    public void close() throws Exception {
+        try {
+            this.zooKeeper.close();
+        } catch (InterruptedException ex) {
+            // Suppressing "try" warning.
+            // TIP: The `AutoClosable#close()` method's signature has
+            //  `throws Exception`, but the compiler reports a “try” warning
+            //  here because `InterruptedException` may be thrown.
+            //  The `Zookeeper#close()` method's signature has
+            //  `throws InterruptedException`, but it is never thrown.
+            //  See: https://github.com/apache/zookeeper/blob/release-3.9.4/zookeeper-server/src/main/java/org/apache/zookeeper/ZooKeeper.java#L137-L144
+            throw new IOException(ex);
+        }
     }
 }

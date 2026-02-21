@@ -7,7 +7,7 @@ import org.jspecify.annotations.NullMarked;
 import java.io.IOException;
 
 @NullMarked
-public class ZookeeperClient {
+public class ZookeeperClient implements AutoCloseable {
     private final ZookeeperConnection zookeeperConnection;
 
     private ZookeeperClient(ZookeeperConnection zookeeperConnection) {
@@ -27,6 +27,7 @@ public class ZookeeperClient {
         return new ZookeeperClient(zookeeperConnection);
     }
 
+    @Override
     public void close() throws Exception {
         this.zookeeperConnection.close();
     }
