@@ -1,0 +1,40 @@
+x-zookeeper-common-environment: &zookeeper-common-environment
+  ZOO_SERVERS: >-
+    server.1=zookeeper_playground_zookeeper_test_1:2888:3888;2181
+    server.2=zookeeper_playground_zookeeper_test_2:2888:3888;2181
+    server.3=zookeeper_playground_zookeeper_test_3:2888:3888;2181
+  ZOO_TICK_TIME: 2000
+  ZOO_INIT_LIMIT: 5
+  ZOO_SYNC_LIMIT: 2
+  ZOO_MAX_CLIENT_CNXNS: 100
+  ZOO_STANDALONE_ENABLED: false
+  ZOO_AUTOPURGE_PURGEINTERVAL: 12
+  ZOO_AUTOPURGE_SNAPRETAINCOUNT: 3
+  ZOO_4LW_COMMANDS_WHITELIST: "srvr"
+  # ZOO_CFG_EXTRA: ""
+  # JVMFLAGS: ""
+
+services:
+
+  zookeeper_playground_zookeeper_test_1:
+    image: "zookeeper:3.9.4-jre-17"
+    hostname: zookeeper_playground_zookeeper_test_1
+    restart: no
+    environment:
+      <<: *zookeeper-common-environment
+      ZOO_MY_ID: 1
+
+  zookeeper_playground_zookeeper_test_2:
+    image: "zookeeper:3.9.4-jre-17"
+    hostname: zookeeper_playground_zookeeper_test_2
+    restart: no
+    environment:
+      <<: *zookeeper-common-environment
+      ZOO_MY_ID: 2
+
+  zookeeper_playground_zookeeper_test_3:
+    image: "zookeeper:3.9.4-jre-17"
+    hostname: zookeeper_playground_zookeeper_test_3
+    environment:
+      <<: *zookeeper-common-environment
+      ZOO_MY_ID: 3

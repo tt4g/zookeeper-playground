@@ -12,6 +12,8 @@ jspecify = "1.0.0"
 junit-jupiter-bom = "6.0.2"
 mockito = "5.21.0"
 assertj = "3.27.7"
+testcontainers-core = "2.0.3"
+testcontainers-junit-jupiter = "1.21.4"
 
 [libraries]
 zookeeper = { module = "org.apache.zookeeper:zookeeper", version.ref = "zookeeper" }
@@ -28,3 +30,5 @@ mockito-bom = { module = "org.mockito:mockito-bom", version.ref = "mockito" }
 mockito-core = { module = "org.mockito:mockito-core" }
 mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter" }
 assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+testcontainers-core = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers-core" }
+testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers-junit-jupiter" }
