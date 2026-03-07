@@ -90,4 +90,9 @@ tasks.named<Test>("test") {
                 org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
         }
     }
+
+    // Avoid Testcontainers problem.
+    // See: [Bug]: Docker 29.0.0 could not find a valid Docker environment
+    //  (https://github.com/testcontainers/testcontainers-java/issues/11212)
+    systemProperties["api.version"] = "1.53"
 }
