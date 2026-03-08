@@ -48,7 +48,30 @@ class LockGuardTest extends AbstractZookeeperTest {
 
     @Test
     @Timeout(15)
-    void testUnlock() {
+    void testUnlock() throws InterruptedException, KeeperException {
+        var znodePath = ZNodePath.root().join("unlock");
+        var lockState = new LockState(1);
+        var lockGuard = new LockGuard(this.zookeeperClient, znodePath, lockState);
+
+        lockGuard.lock();
+        lockGuard.unlock();
+
+        lockState.latch.await(10, TimeUnit.SECONDS);
+        assertThat(lockGuard.isLocked()).isFalse();
+        assertThat(lockState.acquired).isTrue();
+        assertThat(lockState.released).isTrue();
+        assertThat(lockState.conflict).isFalse();
+    }
+
+    @Test
+    @Timeout(15)
+    void testConflict() {
+        // TODO
+    }
+
+    @Test
+    @Timeout(15)
+    void testClose() {
         // TODO
     }
 
