@@ -131,12 +131,13 @@ public class LockGuard implements AutoCloseable {
     }
 
     /**
-     * @return `true` if closed, otherwise returns `false`.
+     * @return Returns `true` if closed, otherwise returns `false`.
      */
     public boolean isClosed() {
         return this.closed.get();
     }
 
+    @Override
     public void close() throws Exception {
         if (this.closed.compareAndExchange(false, true)) {
             return;

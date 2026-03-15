@@ -1,10 +1,7 @@
 package com.github.tt4g.zookeeper.playground.zookeeper.client;
 
 import com.github.tt4g.zookeeper.playground.ZookeeperConfig;
-import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.KeeperException;
-import org.apache.zookeeper.Watcher;
-import org.apache.zookeeper.ZooKeeper;
+import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.ACL;
 import org.jspecify.annotations.NullMarked;
 
@@ -44,6 +41,22 @@ public class ZookeeperConnection implements AutoCloseable {
 
     public void delete(String path, int version) throws InterruptedException, KeeperException {
         this.zooKeeper.delete(path, version);
+    }
+
+    public void exists(String path, Watcher watcher) throws InterruptedException, KeeperException {
+        this.zooKeeper.exists(path, watcher);
+    }
+
+    public void exists(String path, boolean watch) throws InterruptedException, KeeperException {
+        this.zooKeeper.exists(path, watch);
+    }
+
+    public void exists(final String path, Watcher watcher, AsyncCallback.StatCallback cb, Object ctx) {
+        this.zooKeeper.exists(path, watcher, cb, ctx);
+    }
+
+    public void exists(final String path, boolean watch, AsyncCallback.StatCallback cb, Object ctx) {
+        this.zooKeeper.exists(path, watch, cb, ctx);
     }
 
     @Override

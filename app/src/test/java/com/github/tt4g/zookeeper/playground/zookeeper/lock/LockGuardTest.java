@@ -44,6 +44,9 @@ class LockGuardTest extends AbstractZookeeperTest {
         assertThat(lockState.acquired).isTrue();
         assertThat(lockState.released).isFalse();
         assertThat(lockState.conflict).isFalse();
+
+        var existsZnodePath = this.zookeeperClient.existsSync(znodePath, 5, TimeUnit.SECONDS);
+        assertThat(existsZnodePath).isTrue();
     }
 
     @Test
@@ -61,17 +64,39 @@ class LockGuardTest extends AbstractZookeeperTest {
         assertThat(lockState.acquired).isTrue();
         assertThat(lockState.released).isTrue();
         assertThat(lockState.conflict).isFalse();
+
+        var existsZnodePath = this.zookeeperClient.existsSync(znodePath, 5, TimeUnit.SECONDS);
+        assertThat(existsZnodePath).isFalse();
+    }
+
+    @Test
+    @Timeout(20)
+    void testConflict() throws IOException, InterruptedException, KeeperException {
+        var znodePath = ZNodePath.root().join("conflict");
+        var lockState = new LockState(1);
+        var lockGuard = new LockGuard(this.zookeeperClient, znodePath, lockState);
+
+        lockGuard.lock();
+        lockState.latch.await(10, TimeUnit.SECONDS);
+        assertThat(lockGuard.isLocked()).isTrue();
+
+        var conflictZookeeperClient = this.createZookeeperClient();
+        var conflictLockState = new LockState(1);
+        var conflictLockGuard =
+            new LockGuard(conflictZookeeperClient, znodePath, conflictLockState);
+
+        conflictLockGuard.lock();
+        conflictLockState.latch.await(10, TimeUnit.SECONDS);
+        assertThat(conflictLockGuard.isLocked()).isFalse();
+        assertThat(conflictLockGuard.isClosed()).isFalse();
+        assertThat(conflictLockState.acquired).isFalse();
+        assertThat(conflictLockState.conflict).isTrue();
+        assertThat(conflictLockState.released).isFalse();
     }
 
     @Test
     @Timeout(15)
-    void testConflict() {
-        // TODO
-    }
-
-    @Test
-    @Timeout(15)
-    void testClose() {
+    void testClose() throws InterruptedException, KeeperException {
         // TODO
     }
 
