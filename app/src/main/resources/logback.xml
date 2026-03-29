@@ -55,6 +55,6 @@
     </root>
 
     <shutdownHook class="ch.qos.logback.core.hook.DefaultShutdownHook">
-        <delay>100</delay>
+        <delay>1000</delay>
     </shutdownHook>
 </configuration>

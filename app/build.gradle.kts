@@ -20,6 +20,8 @@ repositories {
 dependencies {
     implementation(libs.zookeeper)
 
+    implementation(libs.dotenv.java)
+
     errorprone(libs.errorprone.core)
     errorprone(libs.nullaway)
     implementation(libs.jspecify)
@@ -40,6 +42,9 @@ dependencies {
 //    testImplementation(libs.mockito.junit.jupiter)
 
     testImplementation(libs.assertj.core)
+
+    testImplementation(libs.testcontainers.core)
+    testImplementation(libs.testcontainers.junit.jupiter)
 }
 
 // `jvm-dependency-conflict-resolution` plugin.
