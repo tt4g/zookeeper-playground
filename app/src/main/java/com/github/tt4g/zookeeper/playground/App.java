@@ -3,6 +3,7 @@ package com.github.tt4g.zookeeper.playground;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import picocli.CommandLine;
 
 import java.nio.file.Paths;
 
@@ -10,21 +11,27 @@ public class App {
     private final Logger logger = LoggerFactory.getLogger(App.class);
 
     static void main(String[] args) {
-        new App().run();
+        var appArgs = new AppArgs();
+        new CommandLine(appArgs).parseArgs(args);
+
+        new App().run(appArgs);
     }
 
-    public void run() {
+    public void run(AppArgs appArgs) {
         try {
-            this.logger.atInfo().log("Start.");
+            this.logger.info("Start.");
 
             var dotenv = this.loadDotenv();
             var zookeeperConfig = ZookeeperConfig.load(dotenv);
-            ExecutionController.start(zookeeperConfig);
+            ExecutionController.start(
+                appArgs.getAppMode(),
+                zookeeperConfig
+            );
 
         } catch (Exception ex) {
-            this.logger.atError().addArgument(ex).log("An error occurred!");
+            this.logger.error("An error occurred!", ex);
         } finally {
-            this.logger.atInfo().log("Complete.");
+            this.logger.info("Complete.");
         }
     }
 

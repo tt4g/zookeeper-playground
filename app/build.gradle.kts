@@ -22,6 +22,13 @@ dependencies {
 
     implementation(libs.dotenv.java)
 
+    // Enable Picocli annotation processor.
+    // Don't forget add `-Aproject=${project.group}/${project.name}` to compile
+    // arguments.
+    // See: https://github.com/remkop/picocli/blob/v4.7.7/docs/index.adoc#using-build-tools
+    implementation(libs.picocli)
+    implementation(libs.picocli.codegen)
+
     errorprone(libs.errorprone.core)
     errorprone(libs.nullaway)
     implementation(libs.jspecify)
@@ -77,6 +84,9 @@ application {
 
 tasks.withType(JavaCompile::class).configureEach {
     options.compilerArgs.addLast("-Xlint:all")
+
+    // Picocli annotation processor.
+    options.compilerArgs.addLast("-Aproject=${project.group}/${project.name}")
 }
 
 tasks.named<Test>("test") {

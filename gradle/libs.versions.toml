@@ -4,6 +4,7 @@
 [versions]
 zookeeper = "3.9.4"
 dotenv-java = "5.2.2"
+picocli = "4.7.7"
 slf4j = "2.0.17"
 logback = "1.5.27"
 nullaway = "0.13.1"
@@ -18,6 +19,8 @@ testcontainers-junit-jupiter = "1.21.4"
 [libraries]
 zookeeper = { module = "org.apache.zookeeper:zookeeper", version.ref = "zookeeper" }
 dotenv-java = { module = "io.github.cdimascio:java-dotenv", version.ref = "dotenv-java" }
+picocli = { module = "info.picocli:picocli", version.ref = "picocli" }
+picocli-codegen = { module = "info.picocli:picocli-codegen", version.ref = "picocli" }
 errorprone-core = { module = "com.google.errorprone:error_prone_core", version.ref = "errorprone" }
 nullaway = { module = "com.uber.nullaway:nullaway", version.ref = "nullaway" }
 jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }

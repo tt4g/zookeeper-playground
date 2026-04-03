@@ -24,21 +24,20 @@ public class ExecutionController {
 
     private ExecutionController(
         Logger logger,
-        Runner runner,
-        ZookeeperClient zookeeperClient
+        ZookeeperClient zookeeperClient,
+        AppMode appMode
     ) {
         this.logger = logger;
-        this.runner = runner;
-        this.appGuard = this.createAppGuard(zookeeperClient);
+        this.runner = this.createRunner(appMode);
+        this.appGuard = this.createAppGuard(zookeeperClient, appMode);
     }
 
     public static ExecutionController start(
+        AppMode appMode,
         ZookeeperConfig zookeeperConfig
     ) throws IOException {
         var logger = LoggerFactory.getLogger(ExecutionController.class);
 
-        // TODO: Replace dummy runner
-        var runner = new DummyRunner();
 
         var watcherChain = WatcherChainBuilder.create().build();
         var zookeeperListener = new ZookeeperListener(logger);
@@ -53,19 +52,33 @@ public class ExecutionController {
         var executionController =
             new ExecutionController(
                 logger,
-                runner,
-                zookeeperClient
+                zookeeperClient,
+                appMode
             );
         zookeeperListener.setExecutionController(executionController);
 
         return executionController;
     }
 
+    private Runner createRunner(
+        AppMode appMode
+    ) {
+        return switch (appMode) {
+            case AppMode.Producer -> new ProducerRunner();
+            case AppMode.Consumer -> new ConsumerRunner();
+        };
+    }
+
     private AppGuard createAppGuard(
-        ZookeeperClient zookeeperClient
+        ZookeeperClient zookeeperClient,
+        AppMode appMode
     ) {
         var appStateListener = new AppStateListener();
-        var appPath = ZNodePath.root().join("app");
+        var appPath =
+            switch (appMode) {
+                case AppMode.Producer -> ZNodePath.root().join("producer");
+                case AppMode.Consumer -> ZNodePath.root().join("consumer");
+            };
         return AppGuard.create(
             zookeeperClient,
             appPath,
