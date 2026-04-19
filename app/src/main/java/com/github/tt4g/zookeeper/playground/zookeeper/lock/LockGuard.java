@@ -98,7 +98,7 @@ public class LockGuard implements AutoCloseable {
                 // Not locked.
                 return false;
             }
-            this.zookeeperClient.delete(this.path, -1);
+            this.zookeeperClient.forceDelete(this.path);
             this.lockNode = null;
             this.lockGuardListener.lockReleased();
 

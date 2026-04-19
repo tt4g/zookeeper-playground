@@ -2,6 +2,7 @@ package com.github.tt4g.zookeeper.playground.zookeeper;
 
 import com.github.tt4g.zookeeper.playground.ZookeeperConfig;
 import com.github.tt4g.zookeeper.playground.zookeeper.client.ZookeeperClient;
+import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.jspecify.annotations.NullMarked;
@@ -41,5 +42,12 @@ public abstract class AbstractZookeeperTest {
     ) throws IOException {
         var zookeeperConfig = createZookeeperConfig();
         return ZookeeperClient.create(zookeeperConfig, watcher);
+    }
+
+    protected void deleteRecursiveAll(
+        ZookeeperClient zookeeperClient,
+        ZNodePath pathRoot
+    ) throws InterruptedException, KeeperException {
+        zookeeperClient.deleteRecursive(pathRoot);
     }
 }

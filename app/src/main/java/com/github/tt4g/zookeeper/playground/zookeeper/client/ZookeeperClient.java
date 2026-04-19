@@ -46,6 +46,14 @@ public class ZookeeperClient implements AutoCloseable {
         return this.zookeeperConnection.create(path.getPath(), data, acl, CreateMode.PERSISTENT);
     }
 
+    public String createPersistentSequential(ZNodePath path, byte[] data, ACL acl) throws InterruptedException, KeeperException {
+        return this.zookeeperConnection.create(path.getPath(), data, acl, CreateMode.PERSISTENT_SEQUENTIAL);
+    }
+
+    public String createPersistentSequential(ZNodePath path, byte[] data, List<ACL> acl) throws InterruptedException, KeeperException {
+        return this.zookeeperConnection.create(path.getPath(), data, acl, CreateMode.PERSISTENT_SEQUENTIAL);
+    }
+
     public String createEphemeral(ZNodePath path, byte[] data, ACL acl) throws InterruptedException, KeeperException {
         return this.zookeeperConnection.create(path.getPath(), data, acl, CreateMode.EPHEMERAL);
     }
@@ -54,8 +62,24 @@ public class ZookeeperClient implements AutoCloseable {
         return this.zookeeperConnection.create(path.getPath(), data, acl, CreateMode.EPHEMERAL);
     }
 
+    public void forceDelete(ZNodePath path) throws InterruptedException, KeeperException {
+        this.delete(path, -1);
+    }
+
     public void delete(ZNodePath path, int version) throws InterruptedException, KeeperException {
         this.zookeeperConnection.delete(path.getPath(), version);
+    }
+
+    public void deleteRecursive(ZNodePath pathRoot) throws InterruptedException, KeeperException {
+        this.zookeeperConnection.deleteRecursive(pathRoot.getPath());
+    }
+
+    public void deleteRecursive(ZNodePath pathRoot, int batchSize) throws InterruptedException, KeeperException {
+        this.zookeeperConnection.deleteRecursive(pathRoot.getPath(), batchSize);
+    }
+
+    public void deleteRecursiveAll(ZNodePath pathRoot) throws InterruptedException, KeeperException {
+        this.zookeeperConnection.deleteRecursive(pathRoot.getPath(), -1);
     }
 
     public boolean existsSync(ZNodePath path, long timeout, TimeUnit unit) throws InterruptedException, KeeperException {
@@ -71,6 +95,26 @@ public class ZookeeperClient implements AutoCloseable {
         }
 
         return context.exists.get();
+    }
+
+    public byte[] getData(ZNodePath path) throws InterruptedException, KeeperException {
+        return this.getData(path, false);
+    }
+
+    public byte[] getData(ZNodePath path, boolean watch) throws InterruptedException, KeeperException {
+        return this.zookeeperConnection.getData(path.getPath(), watch, null);
+    }
+
+    public byte[] getData(ZNodePath path, boolean watch, Stat stat) throws InterruptedException, KeeperException {
+        return this.zookeeperConnection.getData(path.getPath(), watch, stat);
+    }
+
+    public List<String> getChildren(ZNodePath path) throws InterruptedException, KeeperException {
+        return this.zookeeperConnection.getChildren(path.getPath());
+    }
+
+    public List<String> getChildren(ZNodePath path, Watcher watcher) throws InterruptedException, KeeperException {
+        return this.zookeeperConnection.getChildren(path.getPath(), watcher);
     }
 
     @Override

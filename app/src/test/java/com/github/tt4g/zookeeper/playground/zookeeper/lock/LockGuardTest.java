@@ -6,6 +6,7 @@ import com.github.tt4g.zookeeper.playground.zookeeper.client.ZookeeperClient;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.ZooDefs;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,22 +21,36 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class LockGuardTest extends AbstractZookeeperTest {
 
+    private ZNodePath testNodePath;
+
     private ZookeeperClient zookeeperClient;
 
     @BeforeEach
-    void setUp() throws IOException {
+    void setUp() throws IOException, InterruptedException, KeeperException {
+        this.testNodePath = ZNodePath.root().join("LockGuardTest");
         this.zookeeperClient = this.createZookeeperClient();
+
+        this.zookeeperClient.createPersistent(
+            this.testNodePath,
+            new byte[]{},
+            ZooDefs.Ids.OPEN_ACL_UNSAFE
+        );
     }
 
     @AfterEach
     void tearDown() throws Exception {
+        this.deleteRecursiveAll(
+            this.zookeeperClient,
+            this.testNodePath
+        );
+
         this.zookeeperClient.close();
     }
 
     @Test
     @Timeout(15)
     void testLock() throws InterruptedException, KeeperException {
-        var znodePath = ZNodePath.root().join("lock");
+        var znodePath = this.testNodePath.join("lock");
         var lockState = new LockState(1);
         var lockGuard = new LockGuard(this.zookeeperClient, znodePath, lockState);
 
@@ -54,7 +69,7 @@ class LockGuardTest extends AbstractZookeeperTest {
     @Test
     @Timeout(15)
     void testUnlock() throws InterruptedException, KeeperException {
-        var znodePath = ZNodePath.root().join("unlock");
+        var znodePath = this.testNodePath.join("unlock");
         var lockState = new LockState(1);
         var lockGuard = new LockGuard(this.zookeeperClient, znodePath, lockState);
 
@@ -75,7 +90,7 @@ class LockGuardTest extends AbstractZookeeperTest {
     @Test
     @Timeout(20)
     void testConflict() throws IOException, InterruptedException, KeeperException {
-        var znodePath = ZNodePath.root().join("conflict");
+        var znodePath = this.testNodePath.join("conflict");
         var lockState = new LockState(1);
         var lockGuard = new LockGuard(this.zookeeperClient, znodePath, lockState);
 
@@ -100,7 +115,7 @@ class LockGuardTest extends AbstractZookeeperTest {
     @Test
     @Timeout(15)
     void testClose() throws Exception {
-        var znodePath = ZNodePath.root().join("close");
+        var znodePath = this.testNodePath.join("close");
         var lockState = new LockState(1);
         var lockGuard = new LockGuard(this.zookeeperClient, znodePath, lockState);
 
@@ -121,7 +136,7 @@ class LockGuardTest extends AbstractZookeeperTest {
     @Test
     @Timeout(30)
     void testCloseZookeeperClient() throws Exception {
-        var znodePath = ZNodePath.root().join("closeZookeeperClient");
+        var znodePath = this.testNodePath.join("closeZookeeperClient");
 
         var waitZookeeperClose = new WaitZookeeperClose();
         var firstZookeeperClient = this.createZookeeperClient(waitZookeeperClose);
