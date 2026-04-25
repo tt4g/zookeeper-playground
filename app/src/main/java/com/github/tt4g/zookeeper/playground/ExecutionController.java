@@ -2,6 +2,7 @@ package com.github.tt4g.zookeeper.playground;
 
 import com.github.tt4g.zookeeper.playground.zookeeper.ZNodePath;
 import com.github.tt4g.zookeeper.playground.zookeeper.client.ZookeeperClient;
+import com.github.tt4g.zookeeper.playground.zookeeper.queue.PubSubQueue;
 import com.github.tt4g.zookeeper.playground.zookeeper.watcher.WatcherChainBuilder;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -9,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.time.Clock;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
@@ -28,7 +31,7 @@ public class ExecutionController {
         AppMode appMode
     ) {
         this.logger = logger;
-        this.runner = this.createRunner(appMode);
+        this.runner = this.createRunner(zookeeperClient, appMode);
         this.appGuard = this.createAppGuard(zookeeperClient, appMode);
     }
 
@@ -61,12 +64,24 @@ public class ExecutionController {
     }
 
     private Runner createRunner(
+        ZookeeperClient zookeeperClient,
         AppMode appMode
     ) {
+        var pubSubQueue = this.createPubSubQueue(zookeeperClient);
         return switch (appMode) {
-            case AppMode.Producer -> new ProducerRunner();
-            case AppMode.Consumer -> new ConsumerRunner();
+            case AppMode.Producer -> {
+                var clock = Clock.systemDefaultZone();
+                var dateTimeFormatter = DateTimeFormatter.ISO_ZONED_DATE_TIME;
+
+                yield new ProducerRunner(pubSubQueue, 10, clock, dateTimeFormatter);
+            }
+            case AppMode.Consumer -> new ConsumerRunner(pubSubQueue, 3);
         };
+    }
+
+    private PubSubQueue createPubSubQueue(ZookeeperClient zookeeperClient) {
+        var queueRootPath = ZNodePath.root().join("appQueueNode");
+        return new PubSubQueue(zookeeperClient, queueRootPath);
     }
 
     private AppGuard createAppGuard(
