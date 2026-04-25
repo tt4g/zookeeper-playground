@@ -123,6 +123,11 @@ public class PubSubQueue implements LeaseableQueue<String>, PushableQueue<String
 
         List<String> childCandidateNames = this.collectElementCandidateNames();
         for (String childCandidateName : childCandidateNames) {
+            if (childCandidateName.startsWith(this.pendingPrefix)) {
+                // Skip pending element nodes.
+                continue;
+            }
+            
             var childSequence = this.parseQueueNodeName(childCandidateName);
             if (childSequence.isEmpty()) {
                 this.logger.warn(
