@@ -59,9 +59,9 @@ public class LockGuard implements AutoCloseable {
         try {
             this.lockNode =
                 this.zookeeperClient.createEphemeral(this.path, new byte[]{}, this.acl);
-            this.lockGuardListener.lockAcquired();
-
             this.logger.debug("znode of LockGuard created: {}", this.lockNode);
+
+            this.lockGuardListener.lockAcquired();
 
             return true;
         } catch (KeeperException ex) {
@@ -99,7 +99,10 @@ public class LockGuard implements AutoCloseable {
                 return false;
             }
             this.zookeeperClient.forceDelete(this.path);
+            var oldLockNode = this.lockNode;
             this.lockNode = null;
+            this.logger.debug("znode of LockGuard deleted: {}", oldLockNode);
+
             this.lockGuardListener.lockReleased();
 
             return true;
